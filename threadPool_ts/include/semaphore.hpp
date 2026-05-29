@@ -4,7 +4,7 @@
 
 class Semaphore{
 public:
-    Semaphore();
+    Semaphore(int num = 0);
     ~Semaphore();
     
     void wait();
@@ -17,7 +17,7 @@ private:
     
     std::mutex _mutex;
     std::condition_variable _cv;
-    std::atomic_int _num;
+    int _num;
     std::atomic_bool _isExit;
 
 };

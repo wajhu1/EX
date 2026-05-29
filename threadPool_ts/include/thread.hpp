@@ -5,16 +5,16 @@
 class Thread{
 public:
     using ThreadFunc = std::function<void(int)>;
-    Thread();
+    Thread(ThreadFunc threadFunc);
     ~Thread();
     //开启线程
     void start();
     //获取线程id
-    int getThreadId()const;
+    size_t getThreadId()const;
 
 private:
-    int _threadId;
-    static int _generateId;
+    size_t _threadId;
+    static size_t _generateId;
     //绑定线程函数
     ThreadFunc _threadFunc;
 

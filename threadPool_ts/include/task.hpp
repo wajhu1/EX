@@ -9,5 +9,5 @@ public:
     void setResult(Result *res);
 private:
     //绑定结果，用于设置结果的值
-    Result *result;
+    Result *_result;
 };
