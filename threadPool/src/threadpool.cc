@@ -89,7 +89,7 @@ void ThreadPool::threadFunc(int threadId){
                 }else{
                         // fixed 模式下，线程持续等待新任务到来。
                         _notEmpty.wait(lock,[&](){
-                            return !_taskQue.empty();
+                            return !_taskQue.empty() || !_isPoolRunning;
                         });
                 }
                 // if(!_isPoolRunning){
