@@ -2,7 +2,7 @@
 
 
 Task::Task(Result* res):_result(res){
-
+    
 }
 void Task::exec(){
     if(_result != nullptr){

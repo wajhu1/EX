@@ -1,8 +1,7 @@
 #pragma once
-#include "task.hpp"
 #include "semaphore.hpp"
 #include "any.hpp"
-
+class Task;
 class Result{
 public:
     Result(std::shared_ptr<Task> task, bool isValid = true);

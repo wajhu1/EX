@@ -1,6 +1,9 @@
 #include "result.hpp"
-Result::Result(std::shared_ptr<Task> task, bool isValid):_task(task), _isValid(isValid),_sem(0){
+#include "task.hpp"
 
+Result::Result(std::shared_ptr<Task> task, bool isValid):_task(task), _isValid(isValid),_sem(0){
+    if(_isValid)
+        _task->setResult(this);
 }
 
 //函数执行完后设置返回值

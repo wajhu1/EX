@@ -49,7 +49,7 @@ Result ThreadPool::submitTask(std::shared_ptr<Task> task){
 
 
     if(!_notFull.wait_for(lock, std::chrono::seconds(1), [&](){
-        return _taskQue.size() < _threadThreshHold;
+        return _taskQue.size() < _taskThrshHold;
     })){
         return Result(task, false);
     }
@@ -88,10 +88,10 @@ void ThreadPool::threadFunc(size_t threadId){
                 }
 
                 if(_poolMode == PoolMode::MODE_CACHED){
-                    if(std::cv_status::timeout = _notEmpty.wait_for(lock, std::chrono::seconds(1))){
+                    if(std::cv_status::timeout == _notEmpty.wait_for(lock, std::chrono::seconds(1))){
                         auto now = std::chrono::high_resolution_clock::now();
                         auto dur = std::chrono::duration_cast<std::chrono::seconds>(now - lastTime);
-                        if(dur.count() > MAX_IDLE_TIME){
+                        if(dur.count() > MAX_IDLE_TIME && _curThreadSize > _initThreadSize){
                             _threads.erase(threadId);
                             _curThreadSize--;
                             _idleThreadSize--;
@@ -102,7 +102,7 @@ void ThreadPool::threadFunc(size_t threadId){
                     }
                 }else{
                     _notEmpty.wait(lock,[&](){
-                        return !_taskQue.empty() || _isPoolRunning;
+                        return !_taskQue.empty() || !_isPoolRunning;
                     });
                 }
 
@@ -114,13 +114,14 @@ void ThreadPool::threadFunc(size_t threadId){
             _idleThreadSize--;
             if(_taskQue.size() != 0)
                 _notEmpty.notify_all();
-        }
+            _notFull.notify_all();
 
+        }
 
         if(task != nullptr){
             task->exec();
         }
-        _notFull.notify_all();
+
         _idleThreadSize++;
         lastTime = std::chrono::high_resolution_clock::now();
     }
